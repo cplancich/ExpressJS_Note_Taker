@@ -1,8 +1,10 @@
 // Require express
+const { json } = require('express');
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
-// const {uuid} = require('uuid');
-const {readFromFile, writeToFile, readAndAppend} = require('./helpers/helper');
+const { v4: uuidv4 } = require('uuid');
+const {readFromFile, readAndAppend} = require('./helpers/helper');
 
 // Require the 'db.json' file and store it in 'notes'
 // const dbJson = require('./db/db.json');
@@ -34,7 +36,7 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title, 
             text,
-            // id: uuid(),
+            id: uuidv4()
         }
 
         readAndAppend(newNote, './db/db.json');
@@ -48,6 +50,26 @@ app.post('/api/notes', (req, res) => {
 // GET * should return the index.html file
 app.get('/*', (req, res)=> {
     res.sendFile(path.join(__dirname, '/public/index.html'));
+});
+
+// DELETE route
+app.delete('/api/notes/:id', (req, res) => {
+    fs.readFile('./db/db.json', "utf8", (err,data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            const notesData = JSON.parse(data)
+            // use filter method to keep notes that don't match uuid
+            console.log(notesData);
+            const filteredNotes = notesData.filter((note) => {
+                // only return notes that do not match req.params.id
+                // if note.id =/= req.params.id keep it
+            })
+
+            // fs write file (new filtered version)
+
+        }
+    })
 });
 
 // Use the 'app' to 'listen' to a specific 'port'
